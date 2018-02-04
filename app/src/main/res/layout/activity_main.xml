@@ -19,7 +19,9 @@
             android:id="@+id/oldSubscriptionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sub_title" />
+            android:text="@string/sub_title"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
 
         <ListView
             android:id="@+id/oldSubscriptionList"
