@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">zhixiao_SubBook</string>
+    <string name="button_add">Add</string>
+    <string name="button_delete">Delete</string>
+    <string name="enter_name">Name</string>
+    <string name="enter_comment">Comments</string>
+    <string name="enter_fee">Monthy Charge</string>
+    <string name="select_date">Date(YYYY-MM-DD)</string>
+    <string name="sub_title">Subscriptions</string>
+</resources>
