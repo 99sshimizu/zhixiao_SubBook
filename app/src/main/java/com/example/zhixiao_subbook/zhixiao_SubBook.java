@@ -1,5 +1,5 @@
 /*
- * Helen_Subscription_Book
+ * Helen_Subscription_Book (zhixiao_SubBook)
  *
  * Version 1.0
  *
@@ -49,11 +49,10 @@ import java.util.ArrayList;
  * @see NewSub
  * @see ViewSubscription
  */
-public class MainActivity extends AppCompatActivity {
-
+public class zhixiao_SubBook extends AppCompatActivity {
 
     private static final String FILENAME = "sub.sav";
-    private MainActivity activity = this;
+    private zhixiao_SubBook activity = this;
 
     private EditText nameText;
     private EditText dateText;
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Called when activity is first created.
      *
-     * @param savedInstanceState The state of saved instance
+     * @param savedInstanceState The state of saved instance.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         oldSubscriptionTitle = findViewById(R.id.oldSubscriptionTitle);
 
         registerForContextMenu(oldSubscriptionList);
-
 
         addButton.setOnClickListener(new View.OnClickListener() {
 
@@ -165,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
 
                     saveInFile();
                 }
-
-
             }
         });
 
@@ -184,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view.setSelected(true);
                 selectedPosition = position;
-
-
             }
         });
 
@@ -194,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent(activity, ViewSubscription.class);
                 Subscription sub = subList.get(position);
-
 
                 String subName = sub.getName();
                 String subDate = sub.getDate();
@@ -206,16 +199,12 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("DATE", subDate);
                 intent.putExtra("FEE", subFee);
                 intent.putExtra("COMMENTS", subComment);
-
                 intent.putExtra("POS", pos);
 
                 startActivityForResult(intent, 1);
-
-
                 return false;
             }
         });
-
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
@@ -244,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
 
                     saveInFile();
                 }
-
             }
         });
     }
@@ -295,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
                 R.layout.activity_list_sub, subList);
 
         oldSubscriptionList.setAdapter(adapter);
-
     }
 
     /**
@@ -321,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
             String title = "Total monthly charges: $"+charge;
             oldSubscriptionTitle.setText(title);
 
-
         } catch (FileNotFoundException e) {
             subList = new ArrayList<>();
         //} catch (IOException e) {
@@ -334,7 +320,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void saveInFile() {
         try {
-
             FileOutputStream fos = openFileOutput(FILENAME,
                     Context.MODE_PRIVATE);
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(fos));
@@ -360,7 +345,6 @@ public class MainActivity extends AppCompatActivity {
             // TODO Auto-generated catch block
             throw new RuntimeException();
         }
-
     }
 
     /**
@@ -371,6 +355,4 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.i("Lifecycle", "onDestroy is called");
     }
-
-
 }

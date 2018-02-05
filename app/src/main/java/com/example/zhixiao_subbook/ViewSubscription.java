@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
+/**
+ * @author Helen
+ * @version 1.5
+ * @see zhixiao_SubBook
+ */
 public class ViewSubscription extends AppCompatActivity {
 
     private EditText nameEdit;
@@ -21,7 +23,11 @@ public class ViewSubscription extends AppCompatActivity {
     private EditText commentsEdit;
     private String pos;
 
-
+    /**
+     * Called when activity is first created.
+     *
+     * @param savedInstanceState The state of saved instance.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +42,6 @@ public class ViewSubscription extends AppCompatActivity {
 
         pos = intent.getStringExtra("POS");
 
-
-        // Capture the layout's TextView and set the string as its text
         nameEdit = findViewById(R.id.name);
         dateEdit = findViewById(R.id.date);
         feeEdit = findViewById(R.id.fee);
@@ -50,6 +54,12 @@ public class ViewSubscription extends AppCompatActivity {
         commentsEdit.setText(subComment);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Saves possible edits on click.
+             *
+             * @param view Current view.
+             */
             @Override
             public void onClick(View view) {
                 setResult(RESULT_OK);
@@ -122,7 +132,6 @@ public class ViewSubscription extends AppCompatActivity {
                     setResult(Activity.RESULT_OK, returnIntent);
                     finish();
                 }
-
             }
         });
     }
