@@ -52,7 +52,8 @@ public class Subscription {
         }
     }
 
-    public String toString() { return name + "\n" + date + "\n" + fee + "\n" + comment; }
+    public String toString() { return "Name: " + name + "\n" + "Start date: " + date + "\n"
+            + "Monthly Charge: " + fee /*+ "\n" + comment*/; }
 
 }
 

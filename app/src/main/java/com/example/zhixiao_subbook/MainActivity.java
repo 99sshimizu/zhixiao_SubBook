@@ -1,15 +1,23 @@
+/*
+ * Helen_Subscription_Book
+ *
+ * Version 1.0
+ *
+ * February 4, 2018
+ *
+ * Copyright (c) 2018 Helen Zhao, CMPUT301, University of Alberta - All Rights Reserved.
+ * You may use, distribute, or modify this code under terms and conditions of the Code of Student Behavior at University of Alberta.
+ * You can find a copy of the licence in the project. Otherwise please contact contact@abc.ca.
+ *
+ */
+
 package com.example.zhixiao_subbook;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,9 +42,19 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/**
+ * @author Helen
+ * @version 1.0
+ * @see Subscription
+ * @see NewSub
+ * @see ViewSubscription
+ */
 public class MainActivity extends AppCompatActivity {
 
+
     private static final String FILENAME = "sub.sav";
+    private MainActivity activity = this;
+
     private EditText nameText;
     private EditText dateText;
     private EditText feeText;
@@ -44,18 +62,21 @@ public class MainActivity extends AppCompatActivity {
     private ListView oldSubscriptionList;
     private TextView oldSubscriptionTitle;
 
-    private ArrayList<Subscription> subList;
-    private ArrayAdapter<Subscription> adapter;
+    public ArrayList<Subscription> subList;
+    public ArrayAdapter<Subscription> adapter;
 
     private int selectedPosition;
 
-
+    /**
+     * Called when activity is first created.
+     *
+     * @param savedInstanceState The state of saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("LifeCycle ---->", "onCreate is called");
         setContentView(R.layout.activity_main);
-
 
         nameText = findViewById(R.id.Name);
         dateText = findViewById(R.id.Date);
@@ -78,26 +99,89 @@ public class MainActivity extends AppCompatActivity {
                 String subFee = feeText.getText().toString();
                 String subComment = commentText.getText().toString();
 
-                Subscription subscription = new NewSub(subName, subDate, subFee, subComment);
-                subList.add(subscription);
-                //totalCharge = totalCharge + Float.valueOf(subFee);
-                //oldSubscriptionTitle.setText(String.valueOf(totalCharge));
+                if (subName.length() == 0) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Name must be not be left blank";
+                    int duration = Toast.LENGTH_LONG;
 
-                nameText.setText("");
-                dateText.setText("");
-                feeText.setText("");
-                commentText.setText("");
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+                else if (subName.length() > 20) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Name must be less than 20 characters";
+                    int duration = Toast.LENGTH_LONG;
 
-                adapter.notifyDataSetChanged();
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
 
-                saveInFile();
+                else if (subDate.length() == 0) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Date must not be left blank";
+                    int duration = Toast.LENGTH_LONG;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+
+                else if (subFee.length() == 0) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Monthly Charges must not be left blank";
+                    int duration = Toast.LENGTH_LONG;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+
+                else if (Float.valueOf(subFee) < 0) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Invalid value entered for Monthly Charges";
+                    int duration = Toast.LENGTH_LONG;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+
+                else if (subComment.length() > 30) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Comments must be less than 30 characters";
+                    int duration = Toast.LENGTH_LONG;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+
+                else {
+                    Subscription subscription = new NewSub(subName, subDate, subFee, subComment);
+                    subList.add(subscription);
+
+                    nameText.setText("");
+                    dateText.setText("");
+                    feeText.setText("");
+                    commentText.setText("");
+
+                    adapter.notifyDataSetChanged();
+
+                    saveInFile();
+                }
+
 
             }
         });
 
         oldSubscriptionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Selects item on click.
+             *
+             * @param parent Parent of view.
+             * @param view Screen view.
+             * @param position Position of click.
+             * @param id ID of click.
+             */
             @Override
-            public void onItemClick(AdapterView<?> parent, android.view.View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view.setSelected(true);
                 selectedPosition = position;
 
@@ -105,40 +189,101 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        oldSubscriptionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(activity, ViewSubscription.class);
+                Subscription sub = subList.get(position);
+
+
+                String subName = sub.getName();
+                String subDate = sub.getDate();
+                String subFee = sub.getFee();
+                String subComment = sub.getComment();
+                String pos = String.valueOf(position);
+
+                intent.putExtra("NAME", subName);
+                intent.putExtra("DATE", subDate);
+                intent.putExtra("FEE", subFee);
+                intent.putExtra("COMMENTS", subComment);
+
+                intent.putExtra("POS", pos);
+
+                startActivityForResult(intent, 1);
+
+
+                return false;
+            }
+        });
+
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Deletes item when delete button is clicked.
+             *
+             * @param v Current view.
+             */
             public void onClick(View v) {
                 setResult(RESULT_OK);
-                subList.remove(selectedPosition);
 
-                adapter.notifyDataSetChanged();
+                if (subList.isEmpty()) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Subscription list is empty";
+                    int duration = Toast.LENGTH_LONG;
 
-                saveInFile();
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+
+                else {
+                    subList.remove(selectedPosition);
+
+                    oldSubscriptionList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+
+                    saveInFile();
+                }
+
             }
         });
     }
 
+    /**
+     * Receives possible edits made on Subscriptions.
+     *
+     * @param requestCode The request code for activity.
+     * @param resultCode The result code for activity.
+     * @param data Data passed over from activity.
+     */
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_list, menu);
-    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                String newName = data.getStringExtra("newNAME");
+                String position = data.getStringExtra("POSITION");
+                String newFee = data.getStringExtra("newFEE");
+                String newDate = data.getStringExtra("newDATE");
+                String newComment = data.getStringExtra("newCOMMENT");
+                int pos = Integer.valueOf(position);
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                Subscription sub = subList.get(pos);
 
-        switch (item.getItemId()) {
-            case R.id.edit_item:
-                return true;
-            case R.id.view_item:
+                sub.setFee(newFee);
+                sub.setDate(newDate);
+                sub.setName(newName);
+                sub.setComment(newComment);
 
-                return true;
+                saveInFile();
+            }
         }
-        return false;
     }
 
+    /**
+     * Starts activity.
+     */
     @Override
     protected void onStart() {
         // TODO Auto-generated method stub
@@ -153,6 +298,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Loads activity.
+     */
     private void loadFromFile() {
         try {
             FileInputStream fis = openFileInput(FILENAME);
@@ -169,7 +317,8 @@ public class MainActivity extends AppCompatActivity {
                 total = total + Float.valueOf(subList.get(i).getFee());
             }
 
-            String title = "Total monthly charge: $"+String.valueOf(total);
+            String charge = String.format(java.util.Locale.US,"%.2f", total);
+            String title = "Total monthly charges: $"+charge;
             oldSubscriptionTitle.setText(title);
 
 
@@ -180,6 +329,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves activity.
+     */
     private void saveInFile() {
         try {
 
@@ -197,7 +349,8 @@ public class MainActivity extends AppCompatActivity {
                 total = total + Float.valueOf(subList.get(i).getFee());
             }
 
-            String title = "Total monthly charge: $"+String.valueOf(total);
+            String charge = String.format(java.util.Locale.US,"%.2f", total);
+            String title = "Total monthly charges: $"+charge;
             oldSubscriptionTitle.setText(title);
 
         } catch (FileNotFoundException e) {
@@ -211,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Destroys the world. Bwahahahahahahaha
+     * Destroys the world. Just kidding.
      */
     @Override
     protected void onDestroy() {
